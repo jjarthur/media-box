@@ -1,0 +1,95 @@
+version: "3.7"
+services:
+  vpn:
+    container_name: vpn
+    image: bubuntux/nordvpn
+    restart: unless-stopped
+    logging:
+      driver: json-file
+    cap_add:
+      - NET_ADMIN
+    devices:
+      - /dev/net/tun
+    environment:
+      - USER=${NORDVPN_USERNAME}
+      - PASS=${NORDVPN_PASSWORD}
+      - CONNECT=${NORDVPN_CONNECT}
+      - TECHNOLOGY=NordLynx
+      - NETWORK=192.168.0.0/24
+      - KILLSWITCH=Enable
+      - TZ=Australia/Sydney
+    ports:
+      - 8080:8080
+      - 9090:9090
+  sabnzbd:
+    container_name: sabnzbd
+    image: hotio/sabnzbd
+    restart: unless-stopped
+    logging:
+      driver: json-file
+    network_mode: service:vpn
+    environment:
+      - PUID=1001
+      - PGID=1001
+      - UMASK=002
+      - TZ=Australia/Sydney
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /docker/appdata/sabnzbd:/config
+      - /data/downloads/usenet:/data/downloads/usenet:rw
+    depends_on:
+      - vpn
+  prowlarr:
+    container_name: prowlarr
+    image: hotio/prowlarr:testing
+    restart: unless-stopped
+    logging:
+      driver: json-file
+    network_mode: bridge
+    environment:
+      - PUID=1001
+      - PGID=1001
+      - UMASK=002
+      - TZ=Australia/Sydney
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /docker/appdata/prowlarr:/config
+      - /data:/data
+    ports:
+      - 9696:9696
+  sonarr:
+    container_name: sonarr
+    image: hotio/sonarr
+    restart: unless-stopped
+    logging:
+      driver: json-file
+    network_mode: bridge
+    environment:
+      - PUID=1001
+      - PGID=1001
+      - UMASK=002
+      - TZ=Australia/Sydney
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /docker/appdata/sonarr:/config
+      - /data:/data
+    ports:
+      - 8989:8989
+  radarr:
+    container_name: radarr
+    image: hotio/radarr
+    restart: unless-stopped
+    logging:
+      driver: json-file
+    network_mode: bridge
+    environment:
+      - PUID=1001
+      - PGID=1001
+      - UMASK=002
+      - TZ=Australia/Sydney
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /docker/appdata/radarr:/config
+      - /data:/data
+    ports:
+      - 7878:7878
