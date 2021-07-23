@@ -10,7 +10,7 @@ This script grabs the working jellyfin-ffmpeg version needed for VAAPI hardware 
 ### LXC config
 If you are running docker in an LXC, you will want to mount your data drives, e.g.:
 
-`/etc/pve/lxc/103.conf`
+**`/etc/pve/lxc/103.conf`**
 ```
 mp0: /data-mirror/media/media,mp=/data
 mp1: /data-mirror/media/transcodes,mp=/transcodes
@@ -18,7 +18,7 @@ mp1: /data-mirror/media/transcodes,mp=/transcodes
 
 You will also want to map your host uid/gid to the container uid/gid:
 
-`/etc/pve/lxc/103.conf`
+**`/etc/pve/lxc/103.conf`**
 ```
 lxc.idmap: u 0 100000 1000
 lxc.idmap: g 0 100000 1000
@@ -28,18 +28,19 @@ lxc.idmap: u 1001 101001 64535
 lxc.idmap: g 1001 101001 64535
 ```
 
-`/etc/subuid`
+**`/etc/subuid`**
 ```
 root:1000:1
 ```
-`/etc/subgid`
+
+**`/etc/subgid`**
 ```
 root:1000:1
 ```
 
 Finally, pass through the render device at `/dev/dri/` with the correct permissions:
 
-`/etc/pve/lxc/103.conf`
+**`/etc/pve/lxc/103.conf`**
 ```
 lxc.cgroup2.devices.allow: c 226:0 rwm
 lxc.cgroup2.devices.allow: c 226:128 rwm
@@ -61,14 +62,14 @@ The docker compose file that is used to fire up the media box. Includes NordVPN.
 ### LXC config
 If you are running docker in an LXC, you will want to mount your data drives, e.g.:
 
-`/etc/pve/lxc/102.conf`
+**`/etc/pve/lxc/102.conf`**
 ```
 mp0: /data-mirror/media,mp=/data
 ```
 
 You will also want to map your host uid/gid to the container uid/gid:
 
-`/etc/pve/lxc/102.conf`
+**`/etc/pve/lxc/102.conf`**
 ```
 lxc.idmap: u 0 100000 1001
 lxc.idmap: g 0 100000 1001
@@ -78,18 +79,19 @@ lxc.idmap: u 1002 101002 64534
 lxc.idmap: g 1002 101002 64534
 ```
 
-`/etc/subuid`
+**`/etc/subuid`**
 ```
 root:1001:1
 ```
-`/etc/subgid`
+
+**`/etc/subgid`**
 ```
 root:1001:1
 ```
 
 Finally, pass through the virtual networking device at `/dev/net/` with the correct permissions:
 
-`/etc/pve/lxc/102.conf`
+**`/etc/pve/lxc/102.conf`**
 ```
 lxc.cgroup.devices.allow: c 10:200 rwm
 lxc.mount.entry: /dev/net dev/net none bind,create=dir 0 0
