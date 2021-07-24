@@ -20,6 +20,7 @@ services:
       - TZ=Australia/Sydney
     ports:
       - 8080:8080
+      - 8085:8085
       - 9090:9090
   sabnzbd:
     container_name: sabnzbd
@@ -32,11 +33,30 @@ services:
       - PUID=1001
       - PGID=1001
       - UMASK=002
+      - ARGS=--server 0.0.0.0:8085
       - TZ=Australia/Sydney
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - /docker/appdata/sabnzbd:/config
       - /data/downloads/usenet:/data/downloads/usenet:rw
+    depends_on:
+      - vpn
+  qbittorrent:
+    container_name: qbittorrent
+    image: hotio/qbittorrent
+    restart: unless-stopped
+    logging:
+      driver: json-file
+    network_mode: service:vpn
+    environment:
+      - PUID=1001
+      - PGID=1001
+      - UMASK=002
+      - TZ=Australia/Sydney
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /docker/appdata/qbittorrent:/config
+      - /data/downloads/torrents:/data/downloads/torrents:rw
     depends_on:
       - vpn
   prowlarr:
