@@ -1,7 +1,7 @@
 # media-box
 
 ## Why?
-This media-box is suited for anyone that wants to hardware transcode in Jellyfin with an 11th gen `Rocket Lake` processor. This range of processors is not yet natively supported on common distributions (e.g. `Ubuntu 20.04` and `Debian 10 (Buster)`), and it is also not supported on the `ffmpeg-jellyfin` version that the current version of Jellyfin ships with (`4.3.1-4-focal`).
+This media-box is suited for anyone that wants to hardware transcode in Jellyfin with an 11th gen `Rocket Lake` processor (e.g. `i5 11500`). This range of processors is not yet natively supported on common distributions (e.g. `Ubuntu 20.04 (Focal Fossa)` and `Debian 10 (Buster)`), and it is also not supported on the `ffmpeg-jellyfin` version that the current version of Jellyfin ships with (`4.3.1-4-focal`).
 
 ## What's in the box?
 There are instructions for configuring LXC's if needed. I have the back-end of the media server (Sonarr, Radarr, SABnzbd, etc.) separated from Jellyfin with two different LXC containers, however there's no reason you can't have everything in the one environment.
@@ -29,6 +29,7 @@ mp1: /data-mirror/media/transcodes,mp=/transcodes
 ```
 
 You will also want to map your host uid/gid to the container uid/gid:
+##### Note: Your own uid/gid mapping may vary, use the below as a guide only.
 
 **`/etc/pve/lxc/103.conf`**
 ```bash
@@ -60,7 +61,7 @@ lxc.cgroup2.devices.allow: c 29:0 rwm
 lxc.mount.entry: /dev/dri dev/dri none bind,optional,create=dir
 lxc.mount.entry: /dev/fb0 dev/fb0 none bind,optional,create=file
 ```
-**Note: You might need to `chmod -R 666 /dev/dri`**
+**Note: You might need to `chmod -R 777 /dev/dri/`**
 
 ## media
 ### docker-compose.yml
@@ -80,6 +81,7 @@ mp0: /data-mirror/media,mp=/data
 ```
 
 You will also want to map your host uid/gid to the container uid/gid:
+##### Note: Your own uid/gid mapping may vary, use the below as a guide only.
 
 **`/etc/pve/lxc/102.conf`**
 ```bash
