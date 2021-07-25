@@ -19,10 +19,10 @@ services:
       - KILLSWITCH=Enable
       - TZ=Australia/Sydney
     ports:
-      - 8080:8080
-      - 8085:8085
-      - 9090:9090
-      - 52525:52525
+      - 8080:8080 # qBittorrent web UI
+      - 8085:8085 # SABnzbd web UI
+      - 9001:9001 # qBittorrent embedded tracker port
+      - 52525:52525 # qBittorrent incoming connections
   sabnzbd:
     container_name: sabnzbd
     image: hotio/sabnzbd
