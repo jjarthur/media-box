@@ -33,7 +33,9 @@ lxc.cgroup2.devices.allow: c 29:0 rwm
 lxc.mount.entry: /dev/dri dev/dri none bind,optional,create=dir
 lxc.mount.entry: /dev/fb0 dev/fb0 none bind,optional,create=file
 ```
-**Note: You might need to `chmod -R 777 /dev/dri`. If so, this will be required on each restart of your server.**
+**Note #1: You might need to `chmod -R 777 /dev/dri`. If so, this will be required on each restart of your server.**
+
+**Note #2: `cgroup2` is used for Proxmox 7. If you use Proxmox 6 or below, use `cgroup` instead.**
 
 ## media
 ### docker-compose.yml
