@@ -1,7 +1,7 @@
 # media-box
 
 ## Why?
-This media-box is suited for anyone that wants to hardware transcode in Jellyfin with an 11th gen `Rocket Lake` processor (e.g. `i5 11500`). This range of processors is not yet natively supported on common distributions (e.g. `Ubuntu 20.04 (Focal Fossa)` and `Debian 10 (Buster)`), and it is also not supported on the `ffmpeg-jellyfin` version that the current version of Jellyfin ships with (`4.3.1-4-focal`).
+This media-box is suited for anyone that wants to hardware transcode with an 11th gen `Rocket Lake` processor (e.g. `i5 11500`). This range of processors is not yet natively supported on common distributions (e.g. `Ubuntu 20.04 (Focal Fossa)` and `Debian 10 (Buster)`), and it is also not supported on the `ffmpeg-jellyfin` version that the current version of Jellyfin ships with (`4.3.1-4-focal`). I use Jellyfin but I'm sure it would work with Plex as well.
 
 ## What's in the box?
 I have the back-end of the media server (Sonarr, Radarr, SABnzbd, etc.) separated from Jellyfin with two different docker-compose files, however there's no reason you can't have everything in the one environment. The reason they are separated is because I run them in two different LXCs within Proxmox. There are instructions for configuring the LXCs if needed.
@@ -23,7 +23,7 @@ This script grabs the working jellyfin-ffmpeg version needed for VAAPI hardware 
 
 1. [Mount your data drive(s)](#mounting-drives)
 2. [Map your ids](#mapping-ids)
-3. Finally, pass through the render device at `/dev/dri/` with the correct permissions:
+3. Finally, pass through the render device at `/dev/dri` with the correct permissions:
 
 **`/etc/pve/lxc/103.conf`**
 ```bash
@@ -33,7 +33,7 @@ lxc.cgroup2.devices.allow: c 29:0 rwm
 lxc.mount.entry: /dev/dri dev/dri none bind,optional,create=dir
 lxc.mount.entry: /dev/fb0 dev/fb0 none bind,optional,create=file
 ```
-**Note: You might need to `chmod -R 777 /dev/dri/`**
+**Note: You might need to `chmod -R 777 /dev/dri`. If so, this will be required on each restart of your server.**
 
 ## media
 ### docker-compose.yml
