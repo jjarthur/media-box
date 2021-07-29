@@ -60,6 +60,9 @@ lxc.mount.entry: /dev/net dev/net none bind,create=dir 0 0
 
 ## LXC configuration
 
+### Enable `nesting`
+Docker won't work by default in an LXC, you need to first turn `nesting` on. In Proxmox UI, go to `Options` of your container and enable `nesting` on in the `Features` row. You will need to reboot your LXC after for this to work.
+
 ### Mounting drives
 If you are running docker in an LXC, you will want to mount your data drives, e.g.:
 
