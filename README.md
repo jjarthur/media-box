@@ -1,7 +1,7 @@
 # media-box
 
 ## Why?
-This media-box is suited for anyone that wants to hardware transcode with an 11th gen `Rocket Lake` processor (e.g. `i5 11500`). This range of processors is not yet natively supported on common distributions (e.g. `Ubuntu 20.04 (Focal Fossa)` and `Debian 10 (Buster)`), and it is also not supported on the `ffmpeg-jellyfin` version that the current version of Jellyfin ships with (`4.3.1-4-focal`). I use Jellyfin but I'm sure it would work with Plex as well.
+This media-box is suited for anyone that wants to hardware transcode with an 11th gen `Rocket Lake` processor (e.g. `i5 11500`). This range of processors is not yet natively supported on common distributions (e.g. `Ubuntu 20.04 (Focal Fossa)` and `Debian 10 (Buster)`), and it is also not supported on the `ffmpeg-jellyfin` version that the current version of Jellyfin ships with (`4.3.1-4-focal`). The steps below combined with the steps on [Jellyfin's Hardware Acceleration page](https://jellyfin.org/docs/general/administration/hardware-acceleration.html#configuring-intel-quicksyncqsv-on-debianubuntu) will enable the use of QuickSync. Although I use Jellyfin throughout, there is no reason this shouldn't work with Plex as well.
 
 ## What's in the box?
 I have the back-end of the media server (Sonarr, Radarr, SABnzbd, etc.) separated from Jellyfin with two different docker-compose files, however there's no reason you can't have everything in the one environment. The reason they are separated is because I run them in two different LXCs within Proxmox. There are instructions for configuring the LXCs if needed.
