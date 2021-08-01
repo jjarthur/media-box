@@ -19,3 +19,22 @@ services:
     devices:
       - /dev/dri/renderD128:/dev/dri/renderD128
       - /dev/dri/card0:/dev/dri/card0
+  plex:
+    container_name: plex
+    image: hotio/plex
+    restart: "always"
+    logging:
+      driver: json-file
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - UMASK=002
+      - TZ=Australia/Sydney
+      - PLEX_PASS=no
+      # - PLEX_CLAIM=claim-XXXXXXXXXXXXXXXXXXXX # Use PLEX_CLAIM on initial setup (https://www.plex.tv/claim/)
+    volumes:
+      - /docker/appdata/plex:/config
+      - /data:/media
+      - /transcodes:/transcodes
+    ports:
+      - "32400:32400"
