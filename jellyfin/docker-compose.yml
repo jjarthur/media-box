@@ -1,8 +1,8 @@
 version: "3.7"
 services:
   jellyfin:
-    image: linuxserver/jellyfin
     container_name: jellyfin
+    image: linuxserver/jellyfin
     restart: "always"
     logging:
       driver: json-file
