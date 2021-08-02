@@ -54,7 +54,7 @@ The docker compose file that is used to fire up the media box. Includes NordVPN.
 
 **`/etc/pve/lxc/102.conf`**
 ```bash
-lxc.cgroup.devices.allow: c 10:200 rwm
+lxc.cgroup2.devices.allow: c 10:200 rwm
 lxc.mount.entry: /dev/net dev/net none bind,create=dir 0 0
 ```
 
