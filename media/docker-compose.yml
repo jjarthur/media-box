@@ -132,6 +132,23 @@ services:
       - /data:/data
     ports:
       - "6767:6767"
+  ombi:
+    container_name: ombi
+    image: hotio/ombi
+    restart: unless-stopped
+    logging:
+      driver: json-file
+    network_mode: bridge
+    environment:
+      - PUID=1001
+      - PGID=1001
+      - UMASK=002
+      - TZ=Australia/Sydney
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /docker/appdata/ombi:/config
+    ports:
+      - "5000:5000"
   readarr:
     container_name: readarr
     image: hotio/readarr:nightly
@@ -150,9 +167,9 @@ services:
       - /data:/data
     ports:
       - "8787:8787"
-  ombi:
-    container_name: ombi
-    image: hotio/ombi
+  calibre:
+    container_name: calibre
+    image: linuxserver/calibre
     restart: unless-stopped
     logging:
       driver: json-file
@@ -164,6 +181,8 @@ services:
       - TZ=Australia/Sydney
     volumes:
       - /etc/localtime:/etc/localtime:ro
-      - /docker/appdata/ombi:/config
+      - /docker/appdata/calibre:/config
+      - /data:/data
     ports:
-      - "5000:5000"
+      - 8180:8080
+      - 8181:8081
