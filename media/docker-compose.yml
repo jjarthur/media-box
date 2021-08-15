@@ -114,6 +114,24 @@ services:
       - /data:/data
     ports:
       - 7878:7878
+  bazarr:
+    container_name: bazarr
+    image: hotio/bazarr
+    restart: unless-stopped
+    logging:
+      driver: json-file
+    network_mode: bridge
+    environment:
+      - PUID=1001
+      - PGID=1001
+      - UMASK=002
+      - TZ=Australia/Sydney
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /docker/appdata/ombi:/config
+      - /data:/data
+    ports:
+      - "6767:6767"
   ombi:
     container_name: ombi
     image: hotio/ombi
@@ -127,6 +145,7 @@ services:
       - UMASK=002
       - TZ=Australia/Sydney
     volumes:
+      - /etc/localtime:/etc/localtime:ro
       - /docker/appdata/ombi:/config
     ports:
       - "5000:5000"
