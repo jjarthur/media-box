@@ -114,3 +114,19 @@ services:
       - /data:/data
     ports:
       - 7878:7878
+  ombi:
+    container_name: ombi
+    image: hotio/ombi
+    restart: unless-stopped
+    logging:
+      driver: json-file
+    network_mode: bridge
+    environment:
+      - PUID=1001
+      - PGID=1001
+      - UMASK=002
+      - TZ=Australia/Sydney
+    volumes:
+      - /docker/appdata/ombi:/config
+    ports:
+      - "5000:5000"
