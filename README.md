@@ -45,6 +45,7 @@ The docker compose file that is used to fire up the media box. Includes NordVPN.
 * `NORDVPN_USERNAME` - Username for NordVPN
 * `NORDVPN_PASSWORD` - Password for NordVPN
 * `NORDVPN_CONNECT` -  [country]/[server]/[country_code]/[city]/[group] or [country] [city], e.g. `Australia`.
+* `NORDVPN_POST_CONNECT` -  Command to execute after successful connection. You will probably want to remove this.
 
 ### LXC extra steps
 

@@ -18,6 +18,7 @@ services:
       - NETWORK=192.168.0.0/24
       - KILLSWITCH=Enable
       - TZ=Australia/Sydney
+      - POST_CONNECT=${NORDVPN_POST_CONNECT}
     ports:
       - 8080:8080 # qBittorrent web UI
       - 8085:8085 # SABnzbd web UI
