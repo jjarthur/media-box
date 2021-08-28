@@ -8,7 +8,7 @@ I have the back-end of the media server (Sonarr, Radarr, SABnzbd, etc.) separate
 
 This isn't a step-by-step instruction guide to set up your media server, but it does cover all the difficult aspects of setting up hardware acceleration for Jellyfin using the `Rocket Lake` processor.
 
-I use NordVPN to route the downloader containers network traffic through, but you can swap this out for your own if necessary.
+The [docker-wireguard](https://docs.linuxserver.io/images/docker-wireguard) container is used to route the download containers network traffic through. See [VPN config](#vpn-config) for setup.
 
 ## jellyfin
 ***IMPORTANT*: Ubuntu 21.04 must be used for `Rocket Lake` processors.**
@@ -39,13 +39,20 @@ lxc.mount.entry: /dev/fb0 dev/fb0 none bind,optional,create=file
 
 ## media
 ### docker-compose.yml
-The docker compose file that is used to fire up the media box. Includes NordVPN.
+The docker compose file that is used to fire up the media box.
 
-**Environment Variables**
-* `NORDVPN_USERNAME` - Username for NordVPN
-* `NORDVPN_PASSWORD` - Password for NordVPN
-* `NORDVPN_CONNECT` -  [country]/[server]/[country_code]/[city]/[group] or [country] [city], e.g. `Australia`.
-* `NORDVPN_POST_CONNECT` -  Command to execute after successful connection. You will probably want to remove this.
+### VPN config
+You need to copy your `wg0.conf` file to `/docker/appdata/wireguard/wg0.conf`. If you don't already have this config file, you can download it from your VPN provider's website. You will probably need to edit your config file with the instructions [here](https://docs.linuxserver.io/images/docker-wireguard#maintaining-local-access-to-attached-services), to maintain local access to the download containers.
+
+**`/docker/appdata/wireguard/wg0.conf`**
+```conf
+[Interface]
+PrivateKey = <private_key>
+Address = <address>/32
+DNS = 8.8.8.8
+PostUp = DROUTE=$(ip route | grep default | awk '{print $3}'); HOMENET=192.168.0.0/16; HOMENET2=10.0.0.0/8; HOMENET3=172.16.0.0/12; ip route add $HOMENET3 via $DROUTE;ip route add $HOMENET2 via $DROUTE; ip route add $HOMENET via $DROUTE;iptables -I OUTPUT -d $HOMENET -j ACCEPT;iptables -A OUTPUT -d $HOMENET2 -j ACCEPT; iptables -A OUTPUT -d $HOMENET3 -j ACCEPT;  iptables -A OUTPUT ! -o %i -m mark ! --mark $(wg show %i fwmark) -m addrtype ! --dst-type LOCAL -j REJECT
+PreDown = HOMENET=192.168.0.0/16; HOMENET2=10.0.0.0/8; HOMENET3=172.16.0.0/12; ip route del $HOMENET3 via $DROUTE;ip route del $HOMENET2 via $DROUTE; ip route del $HOMENET via $DROUTE; iptables -D OUTPUT ! -o %i -m mark ! --mark $(wg show %i fwmark) -m addrtype ! --dst-type LOCAL -j REJECT; iptables -D OUTPUT -d $HOMENET -j ACCEPT; iptables -D OUTPUT -d $HOMENET2 -j ACCEPT; iptables -D OUTPUT -d $HOMENET3 -j ACCEPT
+```
 
 ### LXC extra steps
 
