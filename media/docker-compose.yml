@@ -1,36 +1,37 @@
 version: "3.7"
 services:
-  vpn:
-    container_name: vpn
-    image: bubuntux/nordvpn
+  wireguard:
+    container_name: wireguard
+    image: linuxserver/wireguard
     restart: unless-stopped
     logging:
       driver: json-file
     cap_add:
       - NET_ADMIN
-    devices:
-      - /dev/net/tun
+      - SYS_MODULE
     environment:
-      - USER=${NORDVPN_USERNAME}
-      - PASS=${NORDVPN_PASSWORD}
-      - CONNECT=${NORDVPN_CONNECT}
-      - TECHNOLOGY=NordLynx
-      - NETWORK=192.168.0.0/24
-      - KILLSWITCH=Enable
+      - PUID=1001
+      - PGID=1001
+      - UMASK=002
       - TZ=Australia/Sydney
-      - POST_CONNECT=${NORDVPN_POST_CONNECT}
+      - ALLOWEDIPS=0.0.0.0/0
+    volumes:
+      - /docker/appdata/wireguard:/config
+      - /lib/modules:/lib/modules
     ports:
       - 8080:8080 # qBittorrent web UI
       - 8085:8085 # SABnzbd web UI
       - 9001:9001 # qBittorrent embedded tracker port
       - 52525:52525 # qBittorrent incoming connections
+    sysctls:
+      - net.ipv4.conf.all.src_valid_mark=1
   sabnzbd:
     container_name: sabnzbd
     image: hotio/sabnzbd
     restart: unless-stopped
     logging:
       driver: json-file
-    network_mode: service:vpn
+    network_mode: service:wireguard
     environment:
       - PUID=1001
       - PGID=1001
@@ -41,15 +42,13 @@ services:
       - /etc/localtime:/etc/localtime:ro
       - /docker/appdata/sabnzbd:/config
       - /data/downloads/usenet:/data/downloads/usenet:rw
-    depends_on:
-      - vpn
   qbittorrent:
     container_name: qbittorrent
     image: hotio/qbittorrent
     restart: unless-stopped
     logging:
       driver: json-file
-    network_mode: service:vpn
+    network_mode: service:wireguard
     environment:
       - PUID=1001
       - PGID=1001
@@ -59,8 +58,6 @@ services:
       - /etc/localtime:/etc/localtime:ro
       - /docker/appdata/qbittorrent:/config
       - /data/downloads/torrents:/data/downloads/torrents:rw
-    depends_on:
-      - vpn
   prowlarr:
     container_name: prowlarr
     image: hotio/prowlarr:testing
