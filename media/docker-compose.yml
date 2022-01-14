@@ -183,4 +183,5 @@ services:
       - 8181:8081
 networks:
   openvpn:
+    name: openvpn
     driver: bridge
