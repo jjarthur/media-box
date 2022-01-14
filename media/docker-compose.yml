@@ -31,7 +31,7 @@ services:
     restart: unless-stopped
     logging:
       driver: json-file
-    network_mode: service:wireguard
+    network_mode: service:openvpn
     environment:
       - PUID=1001
       - PGID=1001
@@ -48,7 +48,7 @@ services:
     restart: unless-stopped
     logging:
       driver: json-file
-    network_mode: service:wireguard
+    network_mode: service:openvpn
     environment:
       - PUID=1001
       - PGID=1001
