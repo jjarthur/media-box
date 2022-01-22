@@ -44,7 +44,7 @@ services:
       - /data/downloads/usenet:/data/downloads/usenet:rw
   qbittorrent:
     container_name: qbittorrent
-    image: hotio/qbittorrent
+    image: hotio/qbittorrent:release-4.3.9
     restart: unless-stopped
     logging:
       driver: json-file
