@@ -3,18 +3,12 @@ services:
   nginx:
     container_name: nginx
     image: jc21/nginx-proxy-manager:latest
-    restart: unless-stopped
-    environment:
-      - PUID=1001
-      - PGID=1001
-      - UMASK=002
-      - TZ=Australia/Sydney
     volumes:
       - /docker/appdata/ngnix:/data
       - /docker/letsencrypt:/etc/letsencrypt
     ports:
-      - 80:80 # Public HTTP Port
-      - 443:443 # Public HTTPS Port
+      - 1980:1880 # Public HTTP Port
+      - 19443:18443 # Public HTTPS Port
       - 81:81 # Admin Web Port
   wireguard:
     container_name: wireguard
