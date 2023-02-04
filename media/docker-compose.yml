@@ -8,6 +8,7 @@ services:
       - 80:80 # Public HTTP Port
       - 443:443 # Public HTTPS Port
       - 81:81 # Admin Web Port
+      - 5000:5000
     volumes:
       - /docker/appdata/ngnix:/data
       - ./letsencrypt:/etc/letsencrypt
