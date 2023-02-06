@@ -38,6 +38,7 @@ lxc.mount.entry: /dev/fb0 dev/fb0 none bind,optional,create=file
 **Note #2: `cgroup2` is used for Proxmox 7. If you use Proxmox 6 or below, use `cgroup` instead.**
 
 ## media
+
 ### docker-compose.yml
 The docker compose file that is used to fire up the media box.
 
@@ -67,6 +68,11 @@ PreDown = HOMENET=192.168.0.0/16; HOMENET2=10.0.0.0/8; HOMENET3=172.16.0.0/12; i
 lxc.cgroup2.devices.allow: c 10:200 rwm
 lxc.mount.entry: /dev/net dev/net none bind,create=dir 0 0
 ```
+
+## nginx-proxy-manager
+
+### docker-compose.yml
+The docker compose file for Nginx Proxy Manager.
 
 ## LXC configuration
 
