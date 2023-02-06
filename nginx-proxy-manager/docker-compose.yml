@@ -1,0 +1,16 @@
+version: "3.7"
+services:
+  nginx_proxy_manager:
+    container_name: nginx
+    image: jc21/nginx-proxy-manager:latest
+    ports:
+      - 80:80 # Public HTTP Port
+      - 443:443 # Public HTTPS Port
+      - 81:81 # Admin Web Port
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Australia/Sydney
+    volumes:
+      - /docker/appdata/ngnix:/data
+      - /docker/letsencrypt:/etc/letsencrypt
