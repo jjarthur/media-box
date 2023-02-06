@@ -1,15 +1,5 @@
 version: "3.7"
 services:
-  # nginx:
-  #   container_name: nginx
-  #   image: jc21/nginx-proxy-manager:latest
-  #   volumes:
-  #     - /docker/appdata/ngnix:/data
-  #     - /docker/letsencrypt:/etc/letsencrypt
-  #   ports:
-  #     - 80:80 # Public HTTP Port
-  #     - 443:443 # Public HTTPS Port
-  #     - 81:81 # Admin Web Port
   wireguard:
     container_name: wireguard
     image: linuxserver/wireguard
@@ -135,10 +125,10 @@ services:
       - /docker/appdata/bazarr:/config
       - /data:/data
     ports:
-      - "6767:6767"
+      - 6767:6767
   ombi:
     container_name: ombi
-    image: hotio/ombi
+    image: linuxserver/ombi
     restart: unless-stopped
     logging:
       driver: json-file
@@ -151,7 +141,7 @@ services:
       - /etc/localtime:/etc/localtime:ro
       - /docker/appdata/ombi:/config
     ports:
-      - "5000:5000"
+      - 3579:3579
   readarr:
     container_name: readarr
     image: hotio/readarr:nightly
@@ -168,7 +158,7 @@ services:
       - /docker/appdata/readarr:/config
       - /data:/data
     ports:
-      - "8787:8787"
+      - 8787:8787
   calibre:
     container_name: calibre
     image: linuxserver/calibre
