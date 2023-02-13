@@ -36,8 +36,8 @@ services:
       - PUID=1001
       - PGID=1001
       - UMASK=002
-      - ARGS=--server 0.0.0.0:8085
       - TZ=Australia/Sydney
+      - ARGS=--server 0.0.0.0:8085
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - /docker/appdata/sabnzbd:/config
@@ -177,3 +177,17 @@ services:
     ports:
       - 8180:8080
       - 8181:8081
+  heimdall:
+    image: linuxserver/heimdall
+    container_name: heimdall
+    environment:
+      - PUID=1001
+      - PGID=1001
+      - UMASK=002
+      - TZ=Australia/Sydney
+    volumes:
+      - /docker/appdata/heimdall:/config
+    ports:
+      - 80:80
+      - 443:443
+    restart: unless-stopped
