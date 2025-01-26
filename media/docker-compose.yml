@@ -178,8 +178,8 @@ services:
       - 8180:8080
       - 8181:8081
   heimdall:
-    image: linuxserver/heimdall
     container_name: heimdall
+    image: linuxserver/heimdall
     environment:
       - PUID=1001
       - PGID=1001
@@ -191,3 +191,10 @@ services:
       - 80:80
       - 443:443
     restart: unless-stopped
+  whatsupdocker:
+    container_name: wud
+    image: getwud/wud
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    ports:
+      - 3000:3000
