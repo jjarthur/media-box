@@ -154,6 +154,8 @@ services:
   calibre:
     container_name: calibre
     image: linuxserver/calibre:v7.24.0-ls319
+    security_opt:
+      - seccomp:unconfined
     environment:
       - PUID=1001
       - PGID=1001
