@@ -1,11 +1,7 @@
-version: "3.7"
 services:
   wireguard:
     container_name: wireguard
-    image: linuxserver/wireguard
-    restart: unless-stopped
-    logging:
-      driver: json-file
+    image: linuxserver/wireguard:1.0.20210914-r4-ls66
     cap_add:
       - NET_ADMIN
       - SYS_MODULE
@@ -16,6 +12,7 @@ services:
       - TZ=Australia/Sydney
       - ALLOWEDIPS=0.0.0.0/0
     volumes:
+      - /etc/localtime:/etc/localtime:ro
       - /docker/appdata/wireguard:/config
       - /lib/modules:/lib/modules
     ports:
@@ -25,12 +22,13 @@ services:
       - 50533:50533 # qBittorrent incoming connections
     sysctls:
       - net.ipv4.conf.all.src_valid_mark=1
+    restart: unless-stopped
+    labels:
+      - wud.tag.include=^\d+\.\d+\.\d+-r\d+-ls\d+$$
+      - wud.tag.transform=^(\d+\.\d+\.\d+)-(r\d+)-(ls\d+)$$ => $$1+$$3-$$2
   sabnzbd:
     container_name: sabnzbd
-    image: hotio/sabnzbd
-    restart: unless-stopped
-    logging:
-      driver: json-file
+    image: hotio/sabnzbd:release-4.4.1
     network_mode: service:wireguard
     environment:
       - PUID=1001
@@ -42,12 +40,13 @@ services:
       - /etc/localtime:/etc/localtime:ro
       - /docker/appdata/sabnzbd:/config
       - /data/downloads/usenet:/data/downloads/usenet:rw
+    restart: unless-stopped
+    labels:
+      - wud.tag.include=^release-\d+\.\d+\.\d+$$
+      - wud.tag.transform=^release-(\d+\.\d+\.\d+)$$ => $$1
   qbittorrent:
     container_name: qbittorrent
-    image: hotio/qbittorrent:release-4.3.9
-    restart: unless-stopped
-    logging:
-      driver: json-file
+    image: hotio/qbittorrent:legacy-4.3.9
     network_mode: service:wireguard
     environment:
       - PUID=1001
@@ -58,12 +57,13 @@ services:
       - /etc/localtime:/etc/localtime:ro
       - /docker/appdata/qbittorrent:/config
       - /data/downloads/torrents:/data/downloads/torrents:rw
+    restart: unless-stopped
+    labels:
+      - wud.tag.include=^legacy-\d+\.\d+\.\d+$$
+      - wud.tag.transform=^legacy-(\d+\.\d+\.\d+)$$ => $$1
   prowlarr:
     container_name: prowlarr
-    image: hotio/prowlarr:testing
-    restart: unless-stopped
-    logging:
-      driver: json-file
+    image: hotio/prowlarr:release-1.30.2.4939
     environment:
       - PUID=1001
       - PGID=1001
@@ -75,12 +75,13 @@ services:
       - /data:/data
     ports:
       - 9696:9696
+    restart: unless-stopped
+    labels:
+      - wud.tag.include=^release-\d+\.\d+\.\d+\.\d+$$
+      - wud.tag.transform=^release-(\d+\.\d+\.\d+)\.(\d+)$$ => $$1-$$2
   sonarr:
     container_name: sonarr
-    image: hotio/sonarr
-    restart: unless-stopped
-    logging:
-      driver: json-file
+    image: hotio/sonarr:release-4.0.12.2823
     environment:
       - PUID=1001
       - PGID=1001
@@ -92,12 +93,13 @@ services:
       - /data:/data
     ports:
       - 8989:8989
+    restart: unless-stopped
+    labels:
+      - wud.tag.include=^release-\d+\.\d+\.\d+\.\d+$$
+      - wud.tag.transform=^release-(\d+\.\d+\.\d+)\.(\d+)$$ => $$1-$$2
   radarr:
     container_name: radarr
-    image: hotio/radarr
-    restart: unless-stopped
-    logging:
-      driver: json-file
+    image: hotio/radarr:release-5.17.2.9580
     environment:
       - PUID=1001
       - PGID=1001
@@ -109,12 +111,13 @@ services:
       - /data:/data
     ports:
       - 7878:7878
+    restart: unless-stopped
+    labels:
+      - wud.tag.include=^release-\d+\.\d+\.\d+\.\d+$$
+      - wud.tag.transform=^release-(\d+\.\d+\.\d+)\.(\d+)$$ => $$1-$$2
   bazarr:
     container_name: bazarr
-    image: hotio/bazarr
-    restart: unless-stopped
-    logging:
-      driver: json-file
+    image: hotio/bazarr:release-1.5.1
     environment:
       - PUID=1001
       - PGID=1001
@@ -126,28 +129,13 @@ services:
       - /data:/data
     ports:
       - 6767:6767
-  ombi:
-    container_name: ombi
-    image: linuxserver/ombi
     restart: unless-stopped
-    logging:
-      driver: json-file
-    environment:
-      - PUID=1001
-      - PGID=1001
-      - UMASK=002
-      - TZ=Australia/Sydney
-    volumes:
-      - /etc/localtime:/etc/localtime:ro
-      - /docker/appdata/ombi:/config
-    ports:
-      - 3579:3579
+    labels:
+      - wud.tag.include=^release-\d+\.\d+\.\d+$$
+      - wud.tag.transform=^release-(\d+\.\d+\.\d+)$$ => $$1
   readarr:
     container_name: readarr
-    image: hotio/readarr:nightly
-    restart: unless-stopped
-    logging:
-      driver: json-file
+    image: hotio/readarr:testing-0.4.10.2734
     environment:
       - PUID=1001
       - PGID=1001
@@ -159,12 +147,13 @@ services:
       - /data:/data
     ports:
       - 8787:8787
+    restart: unless-stopped
+    labels:
+      - wud.tag.include=^testing-\d+\.\d+\.\d+\.\d+$$
+      - wud.tag.transform=^testing-(\d+\.\d+\.\d+)\.(\d+)$$ => $$1-$$2
   calibre:
     container_name: calibre
-    image: linuxserver/calibre
-    restart: unless-stopped
-    logging:
-      driver: json-file
+    image: linuxserver/calibre:v7.24.0-ls319
     environment:
       - PUID=1001
       - PGID=1001
@@ -177,24 +166,59 @@ services:
     ports:
       - 8180:8080
       - 8181:8081
-  heimdall:
-    container_name: heimdall
-    image: linuxserver/heimdall
+    restart: unless-stopped
+    labels:
+      - wud.tag.include=^v\d+\.\d+\.\d+-ls\d+$$
+      - wud.tag.transform=^(\d+\.\d+\.\d+)-(ls\d+)$$ => $$1+$$2
+  ombi:
+    container_name: ombi
+    image: linuxserver/ombi:v4.47.1-ls209
     environment:
       - PUID=1001
       - PGID=1001
       - UMASK=002
       - TZ=Australia/Sydney
     volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /docker/appdata/ombi:/config
+    ports:
+      - 3579:3579
+    restart: unless-stopped
+    labels:
+      - wud.tag.include=^v\d+\.\d+\.\d+-ls\d+$$
+      - wud.tag.transform=^(\d+\.\d+\.\d+)-(ls\d+)$$ => $$1+$$2
+  heimdall:
+    container_name: heimdall
+    image: linuxserver/heimdall:v2.6.3-ls298
+    environment:
+      - PUID=1001
+      - PGID=1001
+      - UMASK=002
+      - TZ=Australia/Sydney
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
       - /docker/appdata/heimdall:/config
     ports:
       - 80:80
       - 443:443
     restart: unless-stopped
+    labels:
+      - wud.tag.include=^v\d+\.\d+\.\d+-ls\d+$$
+      - wud.tag.transform=^(\d+\.\d+\.\d+)-(ls\d+)$$ => $$1+$$2
   whatsupdocker:
     container_name: wud
-    image: getwud/wud
+    image: getwud/wud:8.0.1
     volumes:
+      - /etc/localtime:/etc/localtime:ro
       - /var/run/docker.sock:/var/run/docker.sock
+      - /docker/appdata/wud:/store
+      - /docker/docker-compose.yml:/docker/docker-compose.yml
     ports:
       - 3000:3000
+    environment:
+      - WUD_TRIGGER_DOCKERCOMPOSE_MEDIA_FILE=/docker/docker-compose.yml
+      - WUD_TRIGGER_DOCKERCOMPOSE_MEDIA_PRUNE=true
+      - WUD_TRIGGER_DOCKERCOMPOSE_MEDIA_THRESHOLD=patch,minor
+      - WUD_TRIGGER_DISCORD_MEDIA_URL=${WUD_TRIGGER_DISCORD_MEDIA_URL}
+      - WUD_TRIGGER_DISCORD_MEDIA_THRESHOLD=major
+    restart: unless-stopped
