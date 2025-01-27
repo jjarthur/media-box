@@ -4,11 +4,16 @@
 This media-box is suited for anyone that wants to hardware transcode with an 11th gen `Rocket Lake` processor (e.g. `i5 11500`). This range of processors is not yet natively supported on common distributions (e.g. `Ubuntu 20.04 (Focal Fossa)` and `Debian 10 (Buster)`), and it is also not supported on the `ffmpeg-jellyfin` version that the current version of Jellyfin ships with (`4.3.1-4-focal`). The steps below combined with the steps on [Jellyfin's Hardware Acceleration page](https://jellyfin.org/docs/general/administration/hardware-acceleration.html#configuring-intel-quicksyncqsv-on-debianubuntu) will enable the use of QuickSync. Although I use Jellyfin throughout, there is no reason this shouldn't work with Plex as well.
 
 ## What's in the box?
-I have the back-end of the media server (Sonarr, Radarr, SABnzbd, etc.) separated from Jellyfin with two different docker-compose files, however there's no reason you can't have everything in the one environment. The reason they are separated is because I run them in two different LXCs within Proxmox. There are instructions for configuring the LXCs if needed.
+
+### jellyfin + media
+I have the backend of the media server separate from Jellyfin with two different docker-compose files, however there's no reason you can't have everything in the one environment. I separate them because I run them in two different LXCs within Proxmox, allowing me to mess around with the backend without disrupting anyone Jellyfin streams. There are instructions for configuring the LXCs if needed.
 
 This isn't a step-by-step instruction guide to set up your media server, but it does cover all the difficult aspects of setting up hardware acceleration for Jellyfin using the `Rocket Lake` processor.
 
 The [docker-wireguard](https://docs.linuxserver.io/images/docker-wireguard) container is used to route the download containers network traffic through. See [VPN config](#vpn-config) for setup.
+
+### nginx-proxy-manager
+Reverse proxy used to configure networking.
 
 ## jellyfin
 ***IMPORTANT*: Ubuntu 21.04 must be used for `Rocket Lake` processors.**
@@ -35,7 +40,7 @@ lxc.mount.entry: /dev/fb0 dev/fb0 none bind,optional,create=file
 ```
 **Note #1: You might need to `chmod -R 777 /dev/dri`. If so, this will be required on each restart of your server.**
 
-**Note #2: `cgroup2` is used for Proxmox 7. If you use Proxmox 6 or below, use `cgroup` instead.**
+**Note #2: `cgroup2` is used for Proxmox 7+. If you use Proxmox 6 or below, use `cgroup` instead.**
 
 ## media
 
