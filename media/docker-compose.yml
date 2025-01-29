@@ -171,7 +171,7 @@ services:
     restart: unless-stopped
     labels:
       - wud.tag.include=^v\d+\.\d+\.\d+-ls\d+$$
-      - wud.tag.transform=^(\d+\.\d+\.\d+)-(ls\d+)$$ => $$1+$$2
+      - wud.tag.transform=^v(\d+\.\d+\.\d+)-(ls\d+)$$ => $$1+$$2
   ombi:
     container_name: ombi
     image: linuxserver/ombi:v4.47.1-ls209
@@ -188,7 +188,7 @@ services:
     restart: unless-stopped
     labels:
       - wud.tag.include=^v\d+\.\d+\.\d+-ls\d+$$
-      - wud.tag.transform=^(\d+\.\d+\.\d+)-(ls\d+)$$ => $$1+$$2
+      - wud.tag.transform=^v(\d+\.\d+\.\d+)-(ls\d+)$$ => $$1+$$2
   heimdall:
     container_name: heimdall
     image: linuxserver/heimdall:v2.6.3-ls298
@@ -206,7 +206,7 @@ services:
     restart: unless-stopped
     labels:
       - wud.tag.include=^v\d+\.\d+\.\d+-ls\d+$$
-      - wud.tag.transform=^(\d+\.\d+\.\d+)-(ls\d+)$$ => $$1+$$2
+      - wud.tag.transform=^v(\d+\.\d+\.\d+)-(ls\d+)$$ => $$1+$$2
   whatsupdocker:
     container_name: wud
     image: getwud/wud:8.0.1
