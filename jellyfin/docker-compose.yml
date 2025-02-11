@@ -2,7 +2,7 @@ services:
   jellyfin:
     container_name: jellyfin
     image: linuxserver/jellyfin
-    restart: "always"
+    restart: unless-stopped
     logging:
       driver: json-file
     environment:

@@ -21,6 +21,10 @@ case $1 in
         compose_path="$script_dir/../nginx-proxy-manager/docker-compose.yml"
         host=$NGINX
         ;;
+    pihole)
+        compose_path="$script_dir/../pihole/docker-compose.yml"
+        host=$PIHOLE
+        ;;
     *)
         echo "Invalid argument"
         exit 1;;
