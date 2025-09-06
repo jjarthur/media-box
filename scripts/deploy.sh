@@ -3,6 +3,7 @@
 script_dir=$(dirname "$(realpath "$0")")
 
 deploy () {
+    ssh $host "mkdir -p /docker"
     scp $compose_path $host:/docker
 
     ssh $host "cd /docker && docker compose up -d --force-recreate"
@@ -24,6 +25,10 @@ case $1 in
     pihole)
         compose_path="$script_dir/../pihole/docker-compose.yml"
         host=$PIHOLE
+        ;;
+    pdf)
+        compose_path="$script_dir/../stirling-pdf/docker-compose.yml"
+        host=$PDF
         ;;
     *)
         echo "Invalid argument"
