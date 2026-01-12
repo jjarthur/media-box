@@ -28,7 +28,7 @@ services:
       - wud.tag.transform=^(\d+\.\d+\.\d+)-(r\d+)-(ls\d+)$$ => $$1+$$3-$$2
   sabnzbd:
     container_name: sabnzbd
-    image: ghcr.io/hotio/sabnzbd
+    image: ghcr.io/hotio/sabnzbd:release
     network_mode: service:wireguard
     environment:
       - PUID=1001
@@ -46,7 +46,7 @@ services:
       - wud.tag.transform=^release-(\d+\.\d+\.\d+)$$ => $$1
   qbittorrent:
     container_name: qbittorrent
-    image: ghcr.io/hotio/qbittorrent
+    image: ghcr.io/hotio/qbittorrent:release
     network_mode: service:wireguard
     environment:
       - PUID=1001
@@ -63,7 +63,7 @@ services:
       - wud.tag.transform=^legacy-(\d+\.\d+\.\d+)$$ => $$1
   prowlarr:
     container_name: prowlarr
-    image: ghcr.io/hotio/prowlarr
+    image: ghcr.io/hotio/prowlarr:release
     environment:
       - PUID=1001
       - PGID=1001
@@ -81,7 +81,7 @@ services:
       - wud.tag.transform=^release-(\d+\.\d+\.\d+)\.(\d+)$$ => $$1-$$2
   sonarr:
     container_name: sonarr
-    image: ghcr.io/hotio/sonarr
+    image: ghcr.io/hotio/sonarr:release
     environment:
       - PUID=1001
       - PGID=1001
@@ -99,7 +99,7 @@ services:
       - wud.tag.transform=^release-(\d+\.\d+\.\d+)\.(\d+)$$ => $$1-$$2
   radarr:
     container_name: radarr
-    image: ghcr.io/hotio/radarr
+    image: ghcr.io/hotio/radarr:release
     environment:
       - PUID=1001
       - PGID=1001
@@ -117,7 +117,7 @@ services:
       - wud.tag.transform=^release-(\d+\.\d+\.\d+)\.(\d+)$$ => $$1-$$2
   bazarr:
     container_name: bazarr
-    image: ghcr.io/hotio/bazarr
+    image: ghcr.io/hotio/bazarr:release
     environment:
       - PUID=1001
       - PGID=1001
