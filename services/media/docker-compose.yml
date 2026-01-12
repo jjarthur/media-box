@@ -167,7 +167,9 @@ services:
       - /data:/data
     ports:
       - 8180:8080
-      - 8181:8081
+      - 8181:8181
+      - 8182:8081
+    shm_size: "1gb"
     restart: always
     labels:
       - wud.tag.include=^v\d+\.\d+\.\d+-ls\d+$$
