@@ -1,0 +1,23 @@
+services:
+  wedding-share:
+    container_name: wedding-share
+    image: cirx08/wedding_share
+    ports:
+      - '${HTTP_PORT}:5000/tcp'
+    environment:
+      TITLE: '${TITLE}'
+      ACCOUNT_OWNER_USERNAME: '${ACCOUNT_OWNER_USERNAME}'
+      ACCOUNT_OWNER_PASSWORD: '${ACCOUNT_OWNER_PASSWORD}'
+      DATABASE_TYPE: '${DATABASE_TYPE}'
+      ENCRYPTION_KEY: '${ENCRYPTION_KEY}'
+      ENCRYPTION_SALT: '${ENCRYPTION_SALT}'
+      SINGLE_GALLERY_MODE: true
+      GALLERY_SELECTOR_DROPDOWN: true
+      FORCE_HTTPS: true
+      GALLERY_SECRET_KEY: '${GALLERY_SECRET_KEY}'
+    volumes:
+      - /docker/appdata/wedding-share/config:/app/config
+      - /docker/appdata/wedding-share/thumbnails:/app/wwwroot/thumbnails
+      - /docker/appdata/wedding-share/uploads:/app/wwwroot/uploads
+      - /docker/appdata/wedding-share/custom-resources:/app/wwwroot/custom_resources
+    restart: unless-stopped
