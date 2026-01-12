@@ -133,9 +133,9 @@ services:
     labels:
       - wud.tag.include=^release-\d+\.\d+\.\d+$$
       - wud.tag.transform=^release-(\d+\.\d+\.\d+)$$ => $$1
-  readarr:
-    container_name: readarr
-    image: hotio/readarr:testing-0.4.18.2805
+  bookshelf:
+    container_name: bookshelf
+    image: ghcr.io/pennydreadful/bookshelf:hardcover
     environment:
       - PUID=1001
       - PGID=1001
@@ -143,14 +143,14 @@ services:
       - TZ=Australia/Sydney
     volumes:
       - /etc/localtime:/etc/localtime:ro
-      - /docker/appdata/readarr:/config
+      - /docker/appdata/bookshelf:/config
       - /data:/data
     ports:
       - 8787:8787
     restart: always
     labels:
-      - wud.tag.include=^testing-\d+\.\d+\.\d+\.\d+$$
-      - wud.tag.transform=^testing-(\d+\.\d+\.\d+)\.(\d+)$$ => $$1-$$2
+      - wud.tag.include=^hardcover-v\d+\.\d+\.\d+\.\d+$$
+      - wud.tag.transform=^hardcover-v(\d+\.\d+\.\d+)\.(\d+)$$ => $$1-$$2
   calibre:
     container_name: calibre
     image: linuxserver/calibre
