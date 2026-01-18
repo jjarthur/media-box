@@ -24,7 +24,7 @@ case $1 in
         host=$NGINX
         ;;
     pdf)
-        compose_path="$script_dir/../services/stirling-pdf/docker-compose.yml"
+        compose_path="$services_dir/stirling-pdf/docker-compose.yml"
         host=$PDF
         ;;
     pihole)
@@ -36,7 +36,7 @@ case $1 in
         host=$PDF
         ;;
     wedding)
-        compose_path="$services_dir/services/wedding-share/docker-compose.yml"
+        compose_path="$services_dir/wedding-share/docker-compose.yml"
         host=$WEDDING
         ;;
     *)

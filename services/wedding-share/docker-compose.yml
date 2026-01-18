@@ -8,16 +8,19 @@ services:
       TITLE: '${TITLE}'
       ACCOUNT_OWNER_USERNAME: '${ACCOUNT_OWNER_USERNAME}'
       ACCOUNT_OWNER_PASSWORD: '${ACCOUNT_OWNER_PASSWORD}'
+      ACCOUNT_REGISTRATION_ENABLED: false
       DATABASE_TYPE: '${DATABASE_TYPE}'
       ENCRYPTION_KEY: '${ENCRYPTION_KEY}'
       ENCRYPTION_SALT: '${ENCRYPTION_SALT}'
-      SINGLE_GALLERY_MODE: true
       GALLERY_SELECTOR_DROPDOWN: true
-      FORCE_HTTPS: true
+      GALLERY_REQUIRE_REVIEW: false
       GALLERY_SECRET_KEY: '${GALLERY_SECRET_KEY}'
+      GALLERY_MAX_SIZE_MB: 20000
+      GALLERY_MAX_FILE_SIZE_MB: 50
+      SINGLE_GALLERY_MODE: true
     volumes:
       - /docker/appdata/wedding-share/config:/app/config
       - /docker/appdata/wedding-share/thumbnails:/app/wwwroot/thumbnails
-      - /docker/appdata/wedding-share/uploads:/app/wwwroot/uploads
       - /docker/appdata/wedding-share/custom-resources:/app/wwwroot/custom_resources
+      - /data/photos/wedding:/app/wwwroot/uploads
     restart: unless-stopped
