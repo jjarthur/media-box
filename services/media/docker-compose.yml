@@ -191,24 +191,23 @@ services:
     labels:
       - wud.tag.include=^v\d+\.\d+\.\d+-ls\d+$$
       - wud.tag.transform=^v(\d+\.\d+\.\d+)-(ls\d+)$$ => $$1+$$2
-  heimdall:
-    container_name: heimdall
-    image: linuxserver/heimdall
+  seerr:
+    container_name: seerr
+    image: ghcr.io/hotio/seerr:release
     environment:
       - PUID=1001
       - PGID=1001
       - UMASK=002
       - TZ=Australia/Sydney
+      - WEBUI_PORTS=5055/tcp
     volumes:
-      - /etc/localtime:/etc/localtime:ro
-      - /docker/appdata/heimdall:/config
+      - /docker/appdata/seerr:/config
     ports:
-      - 80:80
-      - 443:443
+      - 5055:5055
     restart: always
     labels:
-      - wud.tag.include=^v\d+\.\d+\.\d+-ls\d+$$
-      - wud.tag.transform=^v(\d+\.\d+\.\d+)-(ls\d+)$$ => $$1+$$2
+      - wud.tag.include=^release-\d+\.\d+\.\d+\.\d+$$
+      - wud.tag.transform=^release-(\d+\.\d+\.\d+)\.(\d+)$$ => $$1-$$2
   uptime_kuma:
     container_name: uptime-kuma
     image: louislam/uptime-kuma
@@ -217,7 +216,6 @@ services:
       - /docker/appdata/uptime-kuma:/app/data
     ports:
       - 3001:3001
-    restart: always
     labels:
       - wud.tag.include=^\d+\.\d+\.\d+-beta\.\d+$$
       - wud.tag.transform=^(\d+\.\d+\.\d+)-beta\.(\d)+$$ => $$1-$$2
