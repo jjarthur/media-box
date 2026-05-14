@@ -206,8 +206,8 @@ services:
       - 5055:5055
     restart: always
     labels:
-      - wud.tag.include=^release-\d+\.\d+\.\d+\.\d+$$
-      - wud.tag.transform=^release-(\d+\.\d+\.\d+)\.(\d+)$$ => $$1-$$2
+      - wud.tag.include=^release-\d+\.\d+\.\d+$$
+      - wud.tag.transform=^release-(\d+\.\d+\.\d+)$$ => $$1
   uptime_kuma:
     container_name: uptime-kuma
     image: louislam/uptime-kuma
