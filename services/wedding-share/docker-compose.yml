@@ -1,15 +1,32 @@
 services:
-  wedding-share:
-    container_name: wedding-share
-    image: cirx08/wedding_share
+  mariadb:
+    container_name: 'mariadb'
+    image: 'mariadb:latest'
+    environment:
+      MYSQL_ROOT_HOST: '%'
+      MYSQL_ROOT_PASSWORD: '${MYSQL_ROOT_PASSWORD}'
+      MYSQL_DATABASE: 'memtly'
+      MYSQL_USER: '${MARIADB_USER}'
+      MYSQL_PASSWORD: '${MARIADB_PASSWORD}'
+    volumes:
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+      - data-volume-mariadb:/var/lib/mysql:rw
+    networks:
+      - memtly-net
+    hostname: 'mariadb'
+    restart: 'unless-stopped'
+  memtly:
+    container_name: Memtly
+    image: memtly/memtly:latest
     ports:
-      - '${HTTP_PORT}:5000/tcp'
+      - '${MEMTLY_HTTP_PORT:-8080}:5000/tcp'
     environment:
       TITLE: '${TITLE}'
-      ACCOUNT_OWNER_USERNAME: '${ACCOUNT_OWNER_USERNAME}'
-      ACCOUNT_OWNER_PASSWORD: '${ACCOUNT_OWNER_PASSWORD}'
+      ACCOUNT_ADMIN_PASSWORD: '${ACCOUNT_OWNER_PASSWORD}'
       ACCOUNT_REGISTRATION_ENABLED: false
-      DATABASE_TYPE: '${DATABASE_TYPE}'
+      DATABASE_TYPE: 'mariadb'
+      DATABASE_CONNECTION_STRING: 'Server=mariadb;Port=3306;Database=memtly;User=${MARIADB_USER};Password=${MARIADB_PASSWORD};'
       ENCRYPTION_KEY: '${ENCRYPTION_KEY}'
       ENCRYPTION_SALT: '${ENCRYPTION_SALT}'
       GALLERY_SELECTOR_DROPDOWN: true
@@ -18,9 +35,28 @@ services:
       GALLERY_MAX_SIZE_MB: 20000
       GALLERY_MAX_FILE_SIZE_MB: 50
       SINGLE_GALLERY_MODE: true
+      THEMES_COLOUROVERRIDES_NAVBARTEXT: '#2C2825'
+      THEMES_COLOUROVERRIDES_NAVBARBACKGROUND: '#F0ECE0'
+      THEMES_COLOUROVERRIDES_BACKGROUND: '#F7F5E0'
+      THEMES_COLOUROVERRIDES_PRIMARY1: '#C94F3A'
+      THEMES_COLOUROVERRIDES_PRIMARY2: '#5B89F5'
+      THEMES_COLOUROVERRIDES_PRIMARY3: '#C94F3A'
+      THEMES_DEFAULT: 'Custom'
     volumes:
-      - /docker/appdata/wedding-share/config:/app/config
-      - /docker/appdata/wedding-share/thumbnails:/app/wwwroot/thumbnails
-      - /docker/appdata/wedding-share/custom-resources:/app/wwwroot/custom_resources
-      - /data/photos/wedding:/app/wwwroot/uploads
-    restart: unless-stopped
+      - /docker/appdata/memtly/config:/app/config
+      - /docker/appdata/memtly/thumbnails:/app/thumbnails
+      - /docker/appdata/memtly/uploads:/app/uploads
+      - /docker/appdata/memtly/custom_resources:/app/custom_resources
+    networks:
+      - memtly-net
+    hostname: memtly
+    restart: 'unless-stopped'
+    depends_on:
+      - mariadb
+volumes:
+  data-volume-mariadb:
+    name: Memtly-MariaDB
+networks:
+  memtly-net:
+    name: 'memtly-net'
+    external: false
