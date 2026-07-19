@@ -174,23 +174,6 @@ services:
     labels:
       - wud.tag.include=^v\d+\.\d+\.\d+-ls\d+$$
       - wud.tag.transform=^v(\d+\.\d+\.\d+)-(ls\d+)$$ => $$1+$$2
-  ombi:
-    container_name: ombi
-    image: linuxserver/ombi
-    environment:
-      - PUID=1001
-      - PGID=1001
-      - UMASK=002
-      - TZ=Australia/Sydney
-    volumes:
-      - /etc/localtime:/etc/localtime:ro
-      - /docker/appdata/ombi:/config
-    ports:
-      - 3579:3579
-    restart: always
-    labels:
-      - wud.tag.include=^v\d+\.\d+\.\d+-ls\d+$$
-      - wud.tag.transform=^v(\d+\.\d+\.\d+)-(ls\d+)$$ => $$1+$$2
   seerr:
     container_name: seerr
     image: ghcr.io/hotio/seerr:release
