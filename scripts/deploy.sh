@@ -35,10 +35,6 @@ case $1 in
         compose_path="$services_dir/stirling-pdf/docker-compose.yml"
         host=$PDF
         ;;
-    wedding-share)
-        compose_path="$services_dir/wedding-share/docker-compose.yml"
-        host=$WSHARE
-        ;;
     *)
         echo "Invalid argument"
         exit 1;;
