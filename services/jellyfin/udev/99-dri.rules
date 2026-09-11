@@ -3,7 +3,7 @@
 # and host video(44)/render(108) are NOT mapped, so group ownership by those
 # host groups is invisible inside the CT. Owning the DRM nodes as jellyfin(1002)
 # makes them appear as jellyfin:jellyfin (1000:1000) inside the CT, which is the
-# PUID/PGID both the jellyfin and plex docker containers run as.
+# PUID/PGID the jellyfin docker container runs as.
 # Replaces the manual per-boot "chmod -R 777 /dev/dri".
 SUBSYSTEM=="drm", KERNEL=="card[0-9]*", OWNER="jellyfin", GROUP="jellyfin", MODE="0660"
 SUBSYSTEM=="drm", KERNEL=="renderD[0-9]*", OWNER="jellyfin", GROUP="jellyfin", MODE="0660"

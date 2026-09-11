@@ -47,7 +47,7 @@ SUBSYSTEM=="drm", KERNEL=="renderD[0-9]*", OWNER="jellyfin", GROUP="jellyfin", M
 ```
 Then `udevadm control --reload-rules && udevadm trigger --action=add --subsystem-match=drm`.
 
-An unprivileged container does not map the host's `video`/`render` groups, so `/dev/dri/*` shows up as `nobody:nogroup` inside it and nothing there can open it. Own the nodes as the host user that the [id mapping](#mapping-ids) points at (`jellyfin`, uid/gid 1002 on the host = 1000 inside the container), which is the `PUID`/`PGID` the Jellyfin and Plex containers run as.
+An unprivileged container does not map the host's `video`/`render` groups, so `/dev/dri/*` shows up as `nobody:nogroup` inside it and nothing there can open it. Own the nodes as the host user that the [id mapping](#mapping-ids) points at (`jellyfin`, uid/gid 1002 on the host = 1000 inside the container), which is the `PUID`/`PGID` the Jellyfin container runs as.
 
 ## media
 
