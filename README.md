@@ -28,7 +28,7 @@ This script grabs the working jellyfin-ffmpeg version needed for VAAPI hardware 
 
 1. [Mount your data drive(s)](#mounting-drives)
 2. [Map your ids](#mapping-ids)
-3. Finally, pass through the render device at `/dev/dri` with the correct permissions:
+3. Pass through the render device at `/dev/dri`:
 
 **`/etc/pve/lxc/103.conf`**
 ```bash
@@ -38,7 +38,16 @@ lxc.cgroup2.devices.allow: c 29:0 rwm
 lxc.mount.entry: /dev/dri dev/dri none bind,optional,create=dir
 lxc.mount.entry: /dev/fb0 dev/fb0 none bind,optional,create=file
 ```
-**Note: You might need to `chmod -R 777 /dev/dri`. If so, this will be required on each restart of your server.**
+4. Give the render devices an owner the container can see, with a udev rule on the *Proxmox host*:
+
+**`/etc/udev/rules.d/99-dri.rules`** (copy of [`services/jellyfin/udev/99-dri.rules`](services/jellyfin/udev/99-dri.rules))
+```bash
+SUBSYSTEM=="drm", KERNEL=="card[0-9]*", OWNER="jellyfin", GROUP="jellyfin", MODE="0660"
+SUBSYSTEM=="drm", KERNEL=="renderD[0-9]*", OWNER="jellyfin", GROUP="jellyfin", MODE="0660"
+```
+Then `udevadm control --reload-rules && udevadm trigger --action=add --subsystem-match=drm`.
+
+An unprivileged container does not map the host's `video`/`render` groups, so `/dev/dri/*` shows up as `nobody:nogroup` inside it and nothing there can open it. Own the nodes as the host user that the [id mapping](#mapping-ids) points at (`jellyfin`, uid/gid 1002 on the host = 1000 inside the container), which is the `PUID`/`PGID` the Jellyfin and Plex containers run as.
 
 ## media
 
