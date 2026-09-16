@@ -23,9 +23,7 @@ jobs:
   deploy:
     runs-on: [self-hosted, media-box]
     env:
-      # nginx-proxy-manager still runs from a compose file outside /docker on its
-      # host, so deploying it from here would start a second, conflicting stack.
-      SKIP_SERVICES: nginx-proxy-manager
+      SKIP_SERVICES: ''
 
     steps:
       - uses: actions/checkout@v4
