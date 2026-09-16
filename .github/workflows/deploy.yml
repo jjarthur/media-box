@@ -22,9 +22,6 @@ concurrency:
 jobs:
   deploy:
     runs-on: [self-hosted, media-box]
-    env:
-      SKIP_SERVICES: ''
-
     steps:
       - uses: actions/checkout@v4
         with:
@@ -49,16 +46,9 @@ jobs:
             candidates=$(git diff --name-only "$range" -- services | awk -F/ 'NF > 2 { print $2 }' | sort -u)
           fi
 
-          services=
-          for service in $candidates; do
-            case " $SKIP_SERVICES " in
-              *" $service "*) echo "Skipping $service — deploy it by hand"; continue ;;
-            esac
-            services="$services $service"
-          done
-
-          echo "services=$(echo $services)" >> "$GITHUB_OUTPUT"
-          echo "Deploying:${services:- nothing}"
+          candidates=$(echo $candidates)
+          echo "services=$candidates" >> "$GITHUB_OUTPUT"
+          echo "Deploying: ${candidates:-nothing}"
 
       - name: Deploy
         if: steps.plan.outputs.services != ''
