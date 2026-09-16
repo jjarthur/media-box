@@ -1,0 +1,89 @@
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'services/**'
+      - 'scripts/deploy.sh'
+      - '.github/workflows/deploy.yml'
+  workflow_dispatch:
+    inputs:
+      service:
+        description: 'Service to deploy'
+        default: all
+        type: choice
+        options: [all, jellyfin, media, nginx-proxy-manager, pihole, stirling-pdf]
+
+concurrency:
+  group: deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: [self-hosted, media-box]
+    env:
+      # nginx-proxy-manager still runs from a compose file outside /docker on its
+      # host, so deploying it from here would start a second, conflicting stack.
+      SKIP_SERVICES: nginx-proxy-manager
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Work out which services changed
+        id: plan
+        env:
+          BEFORE: ${{ github.event.before }}
+          REQUESTED: ${{ inputs.service }}
+        run: |
+          all='jellyfin media nginx-proxy-manager pihole stirling-pdf'
+
+          if [ "$GITHUB_EVENT_NAME" = workflow_dispatch ]; then
+            if [ "$REQUESTED" = all ]; then candidates=$all; else candidates=$REQUESTED; fi
+          else
+            if [ -n "$BEFORE" ] && git cat-file -e "$BEFORE^{commit}" 2>/dev/null; then
+              range="$BEFORE..$GITHUB_SHA"
+            else
+              range='HEAD~1..HEAD'
+            fi
+            candidates=$(git diff --name-only "$range" -- services | awk -F/ 'NF > 2 { print $2 }' | sort -u)
+          fi
+
+          services=
+          for service in $candidates; do
+            case " $SKIP_SERVICES " in
+              *" $service "*) echo "Skipping $service — deploy it by hand"; continue ;;
+            esac
+            services="$services $service"
+          done
+
+          echo "services=$(echo $services)" >> "$GITHUB_OUTPUT"
+          echo "Deploying:${services:- nothing}"
+
+      - name: Deploy
+        if: steps.plan.outputs.services != ''
+        env:
+          DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+          SSH_KNOWN_HOSTS: ${{ secrets.SSH_KNOWN_HOSTS }}
+          DEPLOY_HOSTS: ${{ secrets.DEPLOY_HOSTS }}
+        run: |
+          # Logs on a public repo are public: mask each host value individually,
+          # since only whole secret values (and lines) are masked automatically.
+          while IFS='=' read -r name value; do
+            [ -n "$value" ] && echo "::add-mask::$value"
+          done <<< "$DEPLOY_HOSTS"
+
+          mkdir -p ~/.ssh && chmod 700 ~/.ssh
+          printf '%s\n' "$SSH_KNOWN_HOSTS" > ~/.ssh/known_hosts
+          chmod 600 ~/.ssh/known_hosts
+
+          # The key lives in the agent only — it is never written to disk.
+          eval "$(ssh-agent -s)" > /dev/null
+          trap 'ssh-agent -k > /dev/null' EXIT
+          printf '%s\n' "$DEPLOY_SSH_KEY" | ssh-add - 2> /dev/null
+
+          set -a; . <(printf '%s\n' "$DEPLOY_HOSTS"); set +a
+
+          scripts/deploy.sh ${{ steps.plan.outputs.services }}

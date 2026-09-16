@@ -1,43 +1,48 @@
 #!/bin/bash
+set -euo pipefail
 
 script_dir=$(dirname "$(realpath "$0")")
 services_dir="$script_dir/../services"
 
 deploy () {
-    ssh $host "mkdir -p /docker"
-    scp $compose_path $host:/docker
+    ssh "$host" "mkdir -p /docker"
+    scp "$compose_path" "$host:/docker"
 
-    ssh $host "cd /docker && docker compose up -d --force-recreate"
+    ssh "$host" "cd /docker && docker compose up -d --force-recreate --remove-orphans"
 }
 
-case $1 in
-    jellyfin)
-        compose_path="$services_dir/jellyfin/docker-compose.yml"
-        host=$JELLYFIN
-        ;;
-    media)
-        compose_path="$services_dir/media/docker-compose.yml"
-        host=$MEDIA
-        ;;
-    nginx)
-        compose_path="$services_dir/nginx-proxy-manager/docker-compose.yml"
-        host=$NGINX
-        ;;
-    pdf)
-        compose_path="$services_dir/stirling-pdf/docker-compose.yml"
-        host=$PDF
-        ;;
-    pihole)
-        compose_path="$services_dir/pihole/docker-compose.yml"
-        host=$PIHOLE
-        ;;
-    pdf)
-        compose_path="$services_dir/stirling-pdf/docker-compose.yml"
-        host=$PDF
-        ;;
-    *)
-        echo "Invalid argument"
-        exit 1;;
-esac
+if [ $# -eq 0 ]; then
+    echo "Usage: $(basename "$0") <service>... (jellyfin, media, nginx-proxy-manager, pihole, stirling-pdf)" >&2
+    exit 1
+fi
 
-deploy
+for service in "$@"; do
+    case $service in
+        jellyfin)
+            compose_path="$services_dir/jellyfin/docker-compose.yml"
+            host=$JELLYFIN
+            ;;
+        media)
+            compose_path="$services_dir/media/docker-compose.yml"
+            host=$MEDIA
+            ;;
+        nginx|nginx-proxy-manager)
+            compose_path="$services_dir/nginx-proxy-manager/docker-compose.yml"
+            host=$NGINX
+            ;;
+        pdf|stirling-pdf)
+            compose_path="$services_dir/stirling-pdf/docker-compose.yml"
+            host=$PDF
+            ;;
+        pihole)
+            compose_path="$services_dir/pihole/docker-compose.yml"
+            host=$PIHOLE
+            ;;
+        *)
+            echo "Invalid argument: $service" >&2
+            exit 1;;
+    esac
+
+    echo "Deploying $service to $host"
+    deploy
+done
