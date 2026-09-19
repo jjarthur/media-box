@@ -25,20 +25,10 @@ jobs:
     runs-on: [self-hosted, media-box]
     steps:
       - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Work out which services changed
-        id: plan
-        env:
-          BEFORE: ${{ github.event.before }}
-          REQUESTED: ${{ inputs.service }}
-        run: .github/scripts/ci-changed-services.sh
 
       - name: Deploy
-        if: steps.plan.outputs.services != ''
         env:
           DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
           SSH_KNOWN_HOSTS: ${{ secrets.SSH_KNOWN_HOSTS }}
           DEPLOY_HOSTS: ${{ secrets.DEPLOY_HOSTS }}
-        run: .github/scripts/ci-deploy.sh ${{ steps.plan.outputs.services }}
+        run: .github/scripts/ci-deploy.sh "${{ inputs.service || 'all' }}"

@@ -88,11 +88,11 @@ The docker compose file for Nginx Proxy Manager.
 
 ## Deploying
 
-`scripts/deploy.sh <service>...` copies a service's compose file to its host and runs `docker compose up -d --force-recreate --remove-orphans`. It takes either the directory name (`nginx-proxy-manager`) or the short alias (`nginx`), and reads the target host from an environment variable per service: `JELLYFIN`, `MEDIA`, `NGINX`, `PIHOLE` and `PDF`, each holding a `user@host` the script can reach over SSH.
+`scripts/deploy.sh all` — or `scripts/deploy.sh <service>...` — copies each service's compose file to its host and runs `docker compose up -d --remove-orphans`. Compose is declarative, so a service whose file has not changed is left running untouched. It takes either the directory name (`nginx-proxy-manager`) or the short alias (`nginx`), and reads the target host from an environment variable per service: `JELLYFIN`, `MEDIA`, `NGINX`, `PIHOLE` and `PDF`, each holding a `user@host` the script can reach over SSH.
 
 ### CI
 
-`.github/workflows/deploy.yml` runs the same script on a self-hosted GitHub Actions runner, so a push to `main` deploys only the services whose files changed, and `workflow_dispatch` deploys one service or all of them. The workflow is deliberately thin — the shell it runs lives in `.github/scripts/`, leaving `scripts/` for the things you run by hand. The job targets `runs-on: [self-hosted, media-box]` — a runner registered to this repository, running as its own user, separate from the runners that deploy anything else on the same machine.
+`.github/workflows/deploy.yml` runs the same script on a self-hosted GitHub Actions runner, so a push to `main` redeploys every service — unchanged ones are no-ops — and `workflow_dispatch` targets a single service. The workflow is deliberately thin — the shell it runs lives in `.github/scripts/`, leaving `scripts/` for the things you run by hand. The job targets `runs-on: [self-hosted, media-box]` — a runner registered to this repository, running as its own user, separate from the runners that deploy anything else on the same machine.
 
 Three repository secrets configure it: `DEPLOY_SSH_KEY` (loaded into an `ssh-agent` for the job, never written to disk), `SSH_KNOWN_HOSTS` (pinned host keys) and `DEPLOY_HOSTS` (the `user@host` values, masked in the logs because this repository is public). Each target has a `deploy` user in the `docker` group with write access to `/docker`. Note that `docker` group membership is root-equivalent on that guest, so this reduces the blast radius of the CI credential rather than sandboxing it.
 

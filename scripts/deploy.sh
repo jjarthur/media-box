@@ -8,15 +8,23 @@ deploy () {
     ssh "$host" "mkdir -p /docker"
     scp "$compose_path" "$host:/docker"
 
-    ssh "$host" "cd /docker && docker compose up -d --force-recreate --remove-orphans"
+    ssh "$host" "cd /docker && docker compose up -d --remove-orphans"
 }
 
+all_services='jellyfin media nginx-proxy-manager pihole stirling-pdf'
+
 if [ $# -eq 0 ]; then
-    echo "Usage: $(basename "$0") <service>... (jellyfin, media, nginx-proxy-manager, pihole, stirling-pdf)" >&2
+    echo "Usage: $(basename "$0") all | <service>... ($all_services)" >&2
     exit 1
 fi
 
-for service in "$@"; do
+# "all" stands in for every service; compose leaves unchanged ones alone.
+services=
+for arg in "$@"; do
+    if [ "$arg" = all ]; then services="$services $all_services"; else services="$services $arg"; fi
+done
+
+for service in $services; do
     case $service in
         jellyfin)
             compose_path="$services_dir/jellyfin/docker-compose.yml"
