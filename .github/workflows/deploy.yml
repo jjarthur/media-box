@@ -5,7 +5,7 @@ on:
     branches: [main]
     paths:
       - 'services/**'
-      - 'scripts/deploy.sh'
+      - 'scripts/**'
       - '.github/workflows/deploy.yml'
   workflow_dispatch:
     inputs:
@@ -32,23 +32,7 @@ jobs:
         env:
           BEFORE: ${{ github.event.before }}
           REQUESTED: ${{ inputs.service }}
-        run: |
-          all='jellyfin media nginx-proxy-manager pihole stirling-pdf'
-
-          if [ "$GITHUB_EVENT_NAME" = workflow_dispatch ]; then
-            if [ "$REQUESTED" = all ]; then candidates=$all; else candidates=$REQUESTED; fi
-          else
-            if [ -n "$BEFORE" ] && git cat-file -e "$BEFORE^{commit}" 2>/dev/null; then
-              range="$BEFORE..$GITHUB_SHA"
-            else
-              range='HEAD~1..HEAD'
-            fi
-            candidates=$(git diff --name-only "$range" -- services | awk -F/ 'NF > 2 { print $2 }' | sort -u)
-          fi
-
-          candidates=$(echo $candidates)
-          echo "services=$candidates" >> "$GITHUB_OUTPUT"
-          echo "Deploying: ${candidates:-nothing}"
+        run: scripts/ci-changed-services.sh
 
       - name: Deploy
         if: steps.plan.outputs.services != ''
@@ -56,22 +40,4 @@ jobs:
           DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
           SSH_KNOWN_HOSTS: ${{ secrets.SSH_KNOWN_HOSTS }}
           DEPLOY_HOSTS: ${{ secrets.DEPLOY_HOSTS }}
-        run: |
-          # Logs on a public repo are public: mask each host value individually,
-          # since only whole secret values (and lines) are masked automatically.
-          while IFS='=' read -r name value; do
-            [ -n "$value" ] && echo "::add-mask::$value"
-          done <<< "$DEPLOY_HOSTS"
-
-          mkdir -p ~/.ssh && chmod 700 ~/.ssh
-          printf '%s\n' "$SSH_KNOWN_HOSTS" > ~/.ssh/known_hosts
-          chmod 600 ~/.ssh/known_hosts
-
-          # The key lives in the agent only — it is never written to disk.
-          eval "$(ssh-agent -s)" > /dev/null
-          trap 'ssh-agent -k > /dev/null' EXIT
-          printf '%s\n' "$DEPLOY_SSH_KEY" | ssh-add - 2> /dev/null
-
-          set -a; . <(printf '%s\n' "$DEPLOY_HOSTS"); set +a
-
-          scripts/deploy.sh ${{ steps.plan.outputs.services }}
+        run: scripts/ci-deploy.sh ${{ steps.plan.outputs.services }}
