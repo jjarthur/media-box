@@ -6,6 +6,7 @@ on:
     paths:
       - 'services/**'
       - 'scripts/**'
+      - '.github/scripts/**'
       - '.github/workflows/deploy.yml'
   workflow_dispatch:
     inputs:
@@ -32,7 +33,7 @@ jobs:
         env:
           BEFORE: ${{ github.event.before }}
           REQUESTED: ${{ inputs.service }}
-        run: scripts/ci-changed-services.sh
+        run: .github/scripts/ci-changed-services.sh
 
       - name: Deploy
         if: steps.plan.outputs.services != ''
@@ -40,4 +41,4 @@ jobs:
           DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
           SSH_KNOWN_HOSTS: ${{ secrets.SSH_KNOWN_HOSTS }}
           DEPLOY_HOSTS: ${{ secrets.DEPLOY_HOSTS }}
-        run: scripts/ci-deploy.sh ${{ steps.plan.outputs.services }}
+        run: .github/scripts/ci-deploy.sh ${{ steps.plan.outputs.services }}

@@ -6,6 +6,7 @@
 set -euo pipefail
 
 script_dir=$(dirname "$(realpath "$0")")
+repo_root=$(cd "$script_dir/../.." && pwd)
 
 if [ $# -eq 0 ]; then
     echo "Usage: $(basename "$0") <service>..." >&2
@@ -36,4 +37,4 @@ printf '%s\n' "$DEPLOY_SSH_KEY" | ssh-add - 2> /dev/null
 # DEPLOY_HOSTS is an env file; export its variables for deploy.sh to read.
 set -a; . <(printf '%s\n' "$DEPLOY_HOSTS"); set +a
 
-"$script_dir/deploy.sh" "$@"
+"$repo_root/scripts/deploy.sh" "$@"
