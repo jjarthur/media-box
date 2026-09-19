@@ -32,7 +32,7 @@ chmod 600 ~/.ssh/known_hosts
 # "ssh-add -" reads the key from stdin, so it only ever lives in the agent.
 eval "$(ssh-agent -s)" > /dev/null
 trap 'ssh-agent -k > /dev/null' EXIT
-printf '%s\n' "$DEPLOY_SSH_KEY" | ssh-add - 2> /dev/null
+printf '%s\n' "$DEPLOY_SSH_KEY" | ssh-add -
 
 # DEPLOY_HOSTS is an env file; export its variables for deploy.sh to read.
 set -a; . <(printf '%s\n' "$DEPLOY_HOSTS"); set +a
