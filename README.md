@@ -1,7 +1,7 @@
 # media-box
 
 ## Why?
-This media-box is suited for anyone that wants to hardware transcode with an 11th gen `Rocket Lake` processor (e.g. `i5 11500`). This range of processors is not yet natively supported on common distributions (e.g. `Ubuntu 20.04 (Focal Fossa)` and `Debian 10 (Buster)`), and it is also not supported on the `ffmpeg-jellyfin` version that the current version of Jellyfin ships with (`4.3.1-4-focal`). The steps below combined with the steps on [Jellyfin's Hardware Acceleration page](https://jellyfin.org/docs/general/administration/hardware-acceleration.html#configuring-intel-quicksyncqsv-on-debianubuntu) will enable the use of QuickSync. Although I use Jellyfin throughout, there is no reason this shouldn't work with Plex as well.
+This media-box hardware transcodes with an 11th gen `Rocket Lake` processor (e.g. `i5 11500`). Modern Jellyfin ships a `jellyfin-ffmpeg` that supports QuickSync on this generation out of the box, so the only work left is getting the render device into the container — see [Jellyfin's Hardware Acceleration page](https://jellyfin.org/docs/general/post-install/transcoding/hardware-acceleration/intel/) and the [LXC extra steps](#lxc-extra-steps) below. Although I use Jellyfin throughout, there is no reason this shouldn't work with Plex as well.
 
 ## What's in the box?
 
@@ -16,13 +16,9 @@ The [docker-wireguard](https://docs.linuxserver.io/images/docker-wireguard) cont
 Reverse proxy used to configure networking.
 
 ## jellyfin
-***IMPORTANT*: Ubuntu 21.04 must be used for `Rocket Lake` processors.**
 
 ### docker-compose.yml
-The docker compose file that is used to run Jellyfin. It forwards through the relevant devices needed for hardware acceleration.
-
-### custom-cont-init.d/install.sh
-This script grabs the working jellyfin-ffmpeg version needed for VAAPI hardware acceleration. You need to add it to your `/docker/appdata/jellyfin/custom-cont-init.d/install.sh`.
+The docker compose file that is used to run Jellyfin. It forwards through the relevant devices needed for hardware acceleration. The image tracks `latest`, which follows the current major — so a pull can carry a major version bump, and Jellyfin's major upgrades run an irreversible database migration. Back up `/docker/appdata/jellyfin` before pulling one.
 
 ### LXC extra steps
 
