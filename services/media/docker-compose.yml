@@ -191,17 +191,6 @@ services:
     labels:
       - wud.tag.include=^release-\d+\.\d+\.\d+$$
       - wud.tag.transform=^release-(\d+\.\d+\.\d+)$$ => $$1
-  uptime_kuma:
-    container_name: uptime-kuma
-    image: louislam/uptime-kuma
-    volumes:
-      - /etc/localtime:/etc/localtime:ro
-      - /docker/appdata/uptime-kuma:/app/data
-    ports:
-      - 3001:3001
-    labels:
-      - wud.tag.include=^\d+\.\d+\.\d+-beta\.\d+$$
-      - wud.tag.transform=^(\d+\.\d+\.\d+)-beta\.(\d)+$$ => $$1-$$2
   whatsupdocker:
     container_name: wud
     image: getwud/wud
